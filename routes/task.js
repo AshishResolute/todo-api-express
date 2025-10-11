@@ -51,4 +51,15 @@ router.get('/by-group/CompletedTasks',async(req,res)=>{
         res.json({Error:`DataBase error`,err:err.message});
     }
 })
+router.get('/summary',async(req,res)=>{
+    try{
+        let  [summary] = await db.query('select status ,count(*) as total_tasks from tasks group by status');
+        if(!summary) return res.json({message:'No tasks'});
+        res.json(summary);
+    }
+    catch(err)
+    {
+        res.status(500).json({Error:'DataBase error',err:err.message});
+    }
+})
 export default router;
