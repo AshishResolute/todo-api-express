@@ -1,11 +1,13 @@
 import express from 'express';
 import db from './db.js';
+import verifyToken from './verifyToken.js';
 const router = express.Router();
 
-router.post('/',async(req,res)=>{
+router.post('/',verifyToken,async(req,res)=>{
     try{
         let {task_Id,task} = req.body;
-        await db.query('insert into tasks (task_Id,task) values(?,?)',[task_Id,task]);
+        let user_Id = req.user.id;
+        await db.query('insert into tasks (task_Id,task,user_Id) values(?,?,?)',[task_Id,task,user_Id]);
         res.status(200).json(`Task ${task} with Id ${task_Id} added`);
     }
     catch(err)

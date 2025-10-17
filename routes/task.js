@@ -1,8 +1,9 @@
 import express from 'express';
 import db from './db.js';
+import verifyToken from './verifyToken.js'
 const router = express.Router();
 
-router.get('/',async(req,res)=>{
+router.get('/',verifyToken,async(req,res)=>{
     try{
          const [tasks] = await db.query(`select * from tasks`);
          res.status(200).json(tasks);

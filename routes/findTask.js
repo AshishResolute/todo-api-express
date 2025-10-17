@@ -1,13 +1,13 @@
 import express from 'express'
 import db from './db.js';
+import verifyToken from './verifyToken.js';
 const router = express.Router();
 
-router.get('/:id/:task',async(req,res)=>{
+router.get('/',verifyToken,async(req,res)=>{
     try{
-         let id = parseInt(req.params.id);
-         let task = req.params.task;
-         const [tasks] = await db.query(`select * from tasks where task_id=? and task=?`,[id,task]);
-         if(!tasks.length) return res.status(200).json(`Task ${task} not found`);
+         let user_Id = parseInt(req.user.id);
+         const [tasks] = await db.query(`select * from tasks where user_Id=? `,[user_Id]);
+         if(!tasks.length) return res.status(200).json({message:`No Tasks Found`});
          res.status(200).json(tasks);
     }
     catch(err)
