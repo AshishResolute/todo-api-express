@@ -5,6 +5,7 @@ import findTasks from './findTask.js';
 import deleteTaks from './deleteTask.js';
 import authAction from './auth.js';
 import cors from 'cors';
+import verifyToken from './verifyToken.js';
 const app = express();
 const PORT =3000;
 app.use(express.json());
