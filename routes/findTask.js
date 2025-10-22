@@ -27,5 +27,16 @@ router.put('/update-status',verifyToken,async(req,res)=>{
         res.status(500).json({Error:`DataBase Error`,error:error.message});
     }
 })
-
+router.get('/allTasks',verifyToken,async(req,res)=>{
+    try{
+        let user_Id = req.user.id;
+          let [tasks] =await db.query('select task,status,user_Id from tasks where user_Id=?',[user_Id]);
+          if(!tasks.length) return res.status(401).json({Message:`Tasks not found for user`});
+          res.status(200).json(tasks);
+    }
+    catch(err)
+    {
+        res.status(500).json({Error:`DataBase Error`,err:err.message});
+    }
+})
 export default router;
