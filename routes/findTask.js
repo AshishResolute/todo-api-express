@@ -15,6 +15,17 @@ router.get('/',verifyToken,async(req,res)=>{
         res.status(500).json({Error:`DataBase error`,err:err.message});
     }
 });
+router.get('/PaginatedTasks',verifyToken,async(req,res)=>{
+    try{
+        let user_Id = req.user.id;
+        let tasks = await db.query('select * from tasks where user_Id=? limit 3',[user_Id]);
+        res.status(200).json(tasks[0]);
+    }
+    catch(error)
+    {
+        res.status(500).json({Error:`DataBase Error`,Details:error.message});
+    }
+})
 router.put('/update-status',verifyToken,async(req,res)=>{
     try{
         let user_id = req.user.id;
