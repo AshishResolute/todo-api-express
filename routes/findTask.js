@@ -50,4 +50,28 @@ router.get('/allTasks',verifyToken,async(req,res)=>{
         res.status(500).json({Error:`DataBase Error`,err:err.message});
     }
 })
+router.get('/pendingTasks',verifyToken,async(req,res)=>{
+    try{
+        let user_Id = parseInt(req.user.id)
+        let [tasks] = await db.query(`select * from tasks where status=? and user_Id=?`,['pending',user_Id]);
+        if(!tasks.length) return res.status(404).json({Message:`No Pending Tasks`})
+        res.status(200).json({PendingTasks:tasks,totalPendingTasks:tasks.length})    
+    }
+    catch(err)
+    {
+        res.status(500).json({Message:`DataBase Error`,Details:err.message});
+    }
+})
+router.get('/CompletedTasks',verifyToken,async(req,res)=>{
+    try{
+        let user_Id = parseInt(req.user.id);
+        let [tasks] = await db.query(`select * from tasks where status=? and user_Id=?`,['done',user_Id]);
+        if(!tasks.length) return res.status(404).json({Message:`No Tasks Completed or No Tasks Added`})
+        res.status(200).json({CompletedTasks:tasks,TotalCompletedTasks:tasks.length})    
+    }
+    catch(err)
+    {
+        res.status(500).json({Message:`DataBase Error`,Details:err.message});
+    }
+})
 export default router;
