@@ -1,9 +1,10 @@
 import express from 'express';
 import db from './db.js';
 import verifyToken from './verifyToken.js';
+import isAdmin from './admin.js'
 const router = express.Router();
 
-router.post('/',verifyToken,async(req,res)=>{
+router.post('/',verifyToken,isAdmin,async(req,res)=>{
     try{
         let {task_Id,task} = req.body;
         let user_Id = req.user.id;

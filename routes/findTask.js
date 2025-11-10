@@ -1,6 +1,7 @@
 import express from 'express'
 import db from './db.js';
 import verifyToken from './verifyToken.js';
+import isAdmin from './admin.js';
 const router = express.Router();
 
 router.get('/',verifyToken,async(req,res)=>{
@@ -72,6 +73,20 @@ router.get('/CompletedTasks',verifyToken,async(req,res)=>{
     catch(err)
     {
         res.status(500).json({Message:`DataBase Error`,Details:err.message});
+    }
+})
+router.get('/detailedSummary',verifyToken,async(req,res)=>{
+    try{
+        let user_Id = parseInt(req.user.id);
+        let [totalTasks] = await db.query(`select count(*) as total from tasks where user_Id=?`,[user_Id])
+        if(!totalTasks) return res.status(404).json({Message:"No Tasks Found"})
+        let [pendingTasks] = await db.query(`select count(*) as total from tasks where status=? and user_Id=?`,['pending',user_Id]);
+    if(!pendingTasks) return res.status(200).json({Message:`No Pending Tasks`});
+        res.status(200).json({Summary:{TotalTasks:totalTasks[0].total,PendingTasks:pendingTasks[0].total,CompletedTasks:totalTasks[0].total-pendingTasks[0].total}})
+    }
+    catch(err)
+    {
+         res.status(500).json({Message:`DataBase Error`,Details:err.message});
     }
 })
 export default router;

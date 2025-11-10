@@ -16,8 +16,8 @@ router.post('/login', async (req, res) => {
         let match = await bycrypt.compare(password,user.password);
         if(!match) return res.status(401).json({Err:`Passwords didnt match`});
 
-        // generate token
-        const token = jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:'1h'});
+        // generate token]
+        const token = jwt.sign({id:user.id,role:user.role},process.env.JWT_SECRET,{expiresIn:'1h'});
         res.json({message:`Login successfull`,token});
     }
     catch (error) {
