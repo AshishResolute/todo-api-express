@@ -64,4 +64,17 @@ router.get('/summary',async(req,res)=>{
         res.status(500).json({Error:'DataBase error',err:err.message});
     }
 })
+router.get('/adminSummary',verifyToken,isAdmin,async(req,res)=>{
+    try{
+        let user_Id = parseInt(req.user.id);
+        let [users] = await db.query(`select count(*) as users from users`);
+        let [totalTasks] = await db.query(`select count(*) as totalTasks from tasks`);
+        let [pendingTasks] = await db.query(`select count(*) as pending from tasks where status=?`,['pending']);
+       res.status(200).json({TotalUsers:users[0].users,TotalTasks:totalTasks[0].totalTasks,pendingTasks:pendingTasks[0].pending})
+    }
+    catch(err)
+    {
+        res.status(500).json({Error:'DataBase error',err:err.message});
+    }
+})
 export default router;
