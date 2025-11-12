@@ -51,6 +51,20 @@ router.get('/allTasks',verifyToken,async(req,res)=>{
         res.status(500).json({Error:`DataBase Error`,err:err.message});
     }
 })
+router.get('/searchTask',verifyToken,async(req,res)=>{
+    try{
+        let task = req.query.search;
+        if(!task||task.trim()==='') return res.status(400).json({Message:`Query Parameter is required`})
+        let user_Id = req.user.id;
+        let [userTask] = await db.query(`select task from tasks where user_Id=? and task like ?`,[user_Id,`%${task}%`])
+        if(!userTask.length) return res.status(404).json({Message:`${task} Not Found`});
+        res.status(200).json({TasksExists:userTask});
+    }
+    catch(err)
+    {
+        res.status(500).json({Error:`DataBase Error`,Details:err.message})
+    }
+})
 router.get('/pendingTasks',verifyToken,async(req,res)=>{
     try{
         let user_Id = parseInt(req.user.id)
